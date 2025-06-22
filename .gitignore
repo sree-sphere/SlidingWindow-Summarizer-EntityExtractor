@@ -1,0 +1,8 @@
+.env
+__pycache__/
+log/
+*.ipynb
+hf_model/
+streamlit-demo.py
+*.docx
+__init__.py
