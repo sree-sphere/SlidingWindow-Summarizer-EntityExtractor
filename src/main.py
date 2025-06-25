@@ -46,9 +46,10 @@ async def validation_exception_handler(
 
 @app.post("/doc-summarize/")
 async def summarize_file(
-    document: UploadFile = File(...),
+    document: UploadFile = File(..., description="Upload a document file (PDF or DOCX)"),
     system_prompt: str = Form(...),
     input_prompt: str = Form(...),
+    main_entity: str = Form(..., description="Main entity name to extract from the document"),
     temperature: float = Form(0.3)
 ):
     
@@ -81,11 +82,13 @@ async def summarize_file(
             return JSONResponse(status_code=400, content={"error": "No text found in document"})
 
         # Run async summarization
-        final_summary = await hierarchical_summarize(paragraphs, system_prompt, input_prompt)
+        final_summary = ""
+        # final_summary = await hierarchical_summarize(paragraphs, system_prompt, input_prompt)
         
         
         # Run async entity extraction
-        final_entities = await hierarchical_extract_entities(paragraphs, system_prompt, input_prompt, temperature)
+        final_entities = []
+        final_entities = await hierarchical_extract_entities(paragraphs, system_prompt, input_prompt, main_entity, temperature)
         return {"summary": final_summary, "entities": final_entities}
 
     finally:
